@@ -1,4 +1,6 @@
-﻿namespace Todo.Domain.Tag;
+﻿using System.Globalization;
+
+namespace Todo.Domain.Tag;
 
 public class TagDto
 {
@@ -10,13 +12,13 @@ public class TagDto
         Id = tag.Id;
         Name = tag.Name;
         Color = tag.Color;
-        CreationDate = tag.CreationDate;
+        CreationDate = tag.CreationDate.ToString(CultureInfo.CurrentCulture);
     }
 
     public int Id { get; set; }
     public string Name { get; set; }
     public string? Color { get; set; }
-    public DateTime CreationDate { get; set; }
+    public string CreationDate { get; set; }
 }
 
 public class TagCommand

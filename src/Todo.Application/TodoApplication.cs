@@ -24,10 +24,7 @@ public class TodoApplication : ITodoApplication
     {
         var result = await _todoRepository.GetAllAsync();
 
-        var response = result?.Select(x =>
-            new TodoDto(x, x?.Tag != null ? new TagDto(x.Tag) : null)).ToList() ?? new List<TodoDto>();
-
-        return response;
+        return result.ToList();
     }
 
     public async Task<TodoDto> GetById(int id)

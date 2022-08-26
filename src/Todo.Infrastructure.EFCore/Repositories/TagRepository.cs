@@ -14,14 +14,15 @@ public class TagRepository : ITagRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Tag?>> GetAllAsync()
+    public async Task<IEnumerable<TagDto>> GetAllAsync()
     {
-        return await _dbContext.Tags.ToListAsync();
+        return await _dbContext.Tags.Select(tag => new TagDto(tag)).ToListAsync();
     }
 
     public async Task<Tag?> GetAsync(int id)
     {
-        var result = await _dbContext.Tags.SingleOrDefaultAsync(x => x != null && x.Id == id);
+        var result = await _dbContext.Tags
+            .SingleOrDefaultAsync(x => x.Id == id);
 
         return result;
     }

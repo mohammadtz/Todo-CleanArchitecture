@@ -1,4 +1,5 @@
-﻿using Todo.Domain.Tag;
+﻿using System.Globalization;
+using Todo.Domain.Tag;
 
 namespace Todo.Domain.Todo;
 
@@ -10,8 +11,8 @@ public class TodoDto
 
         Id = todo.Id;
         Title = todo.Title;
-        CreationDate = todo.CreationDate;
-        IsDoneDate = todo.IsDoneDate;
+        CreationDate = todo.CreationDate.ToString(CultureInfo.CurrentCulture);
+        IsDoneDate = todo.IsDoneDate?.ToString(CultureInfo.CurrentCulture);
         IsDone = todo.IsDone;
         TagId = todo.TagId;
         Tag = todo.TagId != null ? tag : null;
@@ -19,8 +20,8 @@ public class TodoDto
 
     public int Id { get; set; }
     public string Title { get; set; }
-    public DateTime CreationDate { get; set; }
-    public DateTime? IsDoneDate { get; set; }
+    public string CreationDate { get; set; }
+    public string? IsDoneDate { get; set; }
     public bool IsDone { get; set; }
     public int? TagId { get; set; }
     public TagDto? Tag { get; set; }

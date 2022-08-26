@@ -2,7 +2,7 @@
 
 public interface ITagRepository
 {
-    Task<IEnumerable<Tag?>> GetAllAsync();
+    Task<IEnumerable<TagDto>> GetAllAsync();
     Task<Tag?> GetAsync(int id);
     Task<bool> IsValid(int id);
     Task Insert(Tag? entity);

@@ -20,7 +20,7 @@ public class TagApplication : ITagApplication
     {
         var result = await _tagRepository.GetAllAsync();
 
-        return result?.Select(x => new TagDto(x)).ToList() ?? new List<TagDto>();
+        return result.ToList();
     }
 
     public async Task<TagDto> GetById(int id)

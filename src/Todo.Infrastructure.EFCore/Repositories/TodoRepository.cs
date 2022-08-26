@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Todo.Domain.Tag;
 using Todo.Domain.Todo;
 
 namespace Todo.Infrastructure.EFCore.Repositories;
@@ -12,9 +13,13 @@ public class TodoRepository : ITodoRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Domain.Todo.Todo?>> GetAllAsync()
+    public async Task<IEnumerable<TodoDto>> GetAllAsync()
     {
-        return await _dbContext.Tasks.ToListAsync();
+        var query = await (from todo in _dbContext.Tasks
+            let tagDto = todo.Tag != null ? new TagDto(todo.Tag) : null
+            select new TodoDto(todo, tagDto)).ToListAsync();
+
+        return query;
     }
 
     public async Task<Domain.Todo.Todo?> GetAsync(int id)

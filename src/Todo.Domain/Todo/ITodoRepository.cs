@@ -2,7 +2,7 @@
 
 public interface ITodoRepository
 {
-    Task<IEnumerable<Todo?>> GetAllAsync();
+    Task<IEnumerable<TodoDto>> GetAllAsync();
     Task<Todo?> GetAsync(int id);
     Task Insert(Todo? entity);
     Task Update(Todo? entity);

@@ -4,6 +4,8 @@ using Todo.Application.Contract.Todo;
 using Todo.Application.Contract.Utils;
 using Todo.Application.Utils;
 using Todo.Domain.Exceptions;
+using Todo.Domain.Tag;
+using Todo.Domain.Todo;
 using Todo.Infrastructure.EFCore;
 using Todo.Infrastructure.EFCore.Repositories;
 using Todo.Test.Seeds;

@@ -1,8 +1,8 @@
-﻿namespace Todo.Application.Contract.Tag;
+﻿namespace Todo.Domain.Tag;
 
 public class TagDto
 {
-    public TagDto(Domain.Tag.Tag? tag)
+    public TagDto(Tag? tag)
     {
         if (tag is null)
             throw new ArgumentNullException(nameof(tag));

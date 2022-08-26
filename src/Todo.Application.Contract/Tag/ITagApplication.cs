@@ -1,4 +1,6 @@
-﻿namespace Todo.Application.Contract.Tag;
+﻿using Todo.Domain.Tag;
+
+namespace Todo.Application.Contract.Tag;
 
 public interface ITagApplication
 {

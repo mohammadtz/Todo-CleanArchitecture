@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Contract.Tag;
 using Todo.Domain.Exceptions;
+using Todo.Domain.Tag;
 using Todo.Presentation.Api.Utils;
 
 namespace Todo.Presentation.Api.Controllers;

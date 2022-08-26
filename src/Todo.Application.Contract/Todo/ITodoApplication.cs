@@ -1,4 +1,6 @@
-﻿namespace Todo.Application.Contract.Todo;
+﻿using Todo.Domain.Todo;
+
+namespace Todo.Application.Contract.Todo;
 
 public interface ITodoApplication
 {

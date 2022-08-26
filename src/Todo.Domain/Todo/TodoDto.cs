@@ -1,10 +1,10 @@
-﻿using Todo.Application.Contract.Tag;
+﻿using Todo.Domain.Tag;
 
-namespace Todo.Application.Contract.Todo;
+namespace Todo.Domain.Todo;
 
 public class TodoDto
 {
-    public TodoDto(Domain.Todo.Todo? todo, TagDto? tag)
+    public TodoDto(Todo? todo, TagDto? tag)
     {
         if (todo == null) throw new ArgumentNullException(nameof(todo));
 

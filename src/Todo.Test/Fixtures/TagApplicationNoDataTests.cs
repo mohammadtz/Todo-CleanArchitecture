@@ -3,6 +3,7 @@ using Todo.Application;
 using Todo.Application.Contract.Tag;
 using Todo.Application.Contract.Utils;
 using Todo.Application.Utils;
+using Todo.Domain.Tag;
 using Todo.Infrastructure.EFCore;
 using Todo.Infrastructure.EFCore.Repositories;
 

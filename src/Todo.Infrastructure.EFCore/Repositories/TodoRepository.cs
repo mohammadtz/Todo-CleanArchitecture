@@ -19,7 +19,7 @@ public class TodoRepository : ITodoRepository
 
     public async Task<Domain.Todo.Todo?> GetAsync(int id)
     {
-        return await _dbContext.Tasks.FirstOrDefaultAsync(x => x != null && x.Id == id);
+        return await _dbContext.Tasks.FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task Insert(Domain.Todo.Todo? entity)

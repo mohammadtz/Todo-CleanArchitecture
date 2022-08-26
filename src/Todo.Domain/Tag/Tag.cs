@@ -2,10 +2,10 @@
 
 public class Tag
 {
-    public Tag(string name, string color)
+    public Tag(string name, string? color)
     {
         Name = name;
-        Color = color;
+        Color = color ?? "ffffff";
         CreationDate = DateTime.Now;
 
         Tasks = new HashSet<Todo.Todo>();

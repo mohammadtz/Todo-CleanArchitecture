@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Todo.Application.Contract.Utils;
+using Todo.Domain.Exceptions;
 using Todo.Domain.Tag;
 
 namespace Todo.Infrastructure.EFCore.Repositories;
@@ -33,7 +34,7 @@ public class TagRepository : ITagRepository
     public async Task Insert(Tag? entity)
     {
         if (entity == null)
-            throw new ArgumentNullException(nameof(entity));
+            throw new NotFoundException(nameof(entity));
 
         await _dbContext.Tags.AddAsync(entity);
         await _dbContext.SaveChangesAsync();

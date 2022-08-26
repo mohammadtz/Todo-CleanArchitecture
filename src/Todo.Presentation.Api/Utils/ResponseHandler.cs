@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
+using Todo.Domain.Exceptions;
 
 namespace Todo.Presentation.Api.Utils;
 
@@ -19,15 +19,39 @@ public class Response<T>
 
 public static class ExceptionHandler
 {
-    public static ObjectResult HandleArgumentNullException(this ControllerBase controllerBase, ArgumentNullException ex, int status = 400)
+    public static ObjectResult HandleNotFoundException(this ControllerBase controllerBase, NotFoundException ex, int status = 404)
     {
-        var message = $"{ex.Message} cannot be null";
-        return controllerBase.StatusCode(status, new Response<object>(null) { Message = message, Status = status });
+        var message = ex.Message.NotFoundException();
+
+        var response = new Response<object>(null)
+        {
+            Message = message, 
+            Status = status
+        };
+
+        return controllerBase.NotFound(response);
     }
 
-    public static ObjectResult UnHandledException(this ControllerBase controllerBase, Exception ex, int status = 400)
+    public static ObjectResult HandleMessageException(this ControllerBase controllerBase, MessageException ex, int status = 400)
     {
-        return controllerBase.StatusCode(status, new Response<object>(null) { Message = ex.Message, Status = status, InnerMessage = ex.InnerException?.Message });
+        var response = new Response<object>(null)
+        {
+            Message = ex.Message, 
+            Status = status
+        };
+
+        return controllerBase.BadRequest(response);
+    }
+
+    public static ObjectResult UnHandledException(this ControllerBase controllerBase, Exception ex, int status = 500)
+    {
+        var response = new Response<object>(null)
+        {
+            Message = ex.Message, 
+            Status = status, 
+            InnerMessage = ex.InnerException?.Message
+        };
+
+        return controllerBase.StatusCode(status, response);
     }
 }
-

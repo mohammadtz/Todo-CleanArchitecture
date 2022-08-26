@@ -1,15 +1,17 @@
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using Todo.Application;
 using Todo.Application.Contract.Todo;
 using Todo.Application.Contract.Utils;
 using Todo.Application.Utils;
+using Todo.Domain.Exceptions;
 using Todo.Infrastructure.EFCore;
 using Todo.Infrastructure.EFCore.Repositories;
 using Todo.Test.Seeds;
 
 namespace Todo.Test.Fixtures;
 
+[Category("Todo")]
+[TestFixture, Apartment(ApartmentState.STA)]
 public class TodoApplicationWithDataTests
 {
     protected TodoDbContext? Context;
@@ -80,7 +82,7 @@ public class TodoApplicationWithDataTests
     {
         await Application.Create(new TodoCommand { Title = "test", TagId = 1 });
 
-        Assert.That(_logger.LastError, Is.EqualTo("Todo is Created"));
+        Assert.That(_logger.LastError, Is.EqualTo(nameof(Todo).IsCreated()));
     }
 
     [Test]
@@ -88,7 +90,7 @@ public class TodoApplicationWithDataTests
     {
         await Application.Update(1, new TodoCommand { Title = "test", TagId = 1 });
 
-        Assert.That(_logger.LastError, Is.EqualTo("Todo is Updated"));
+        Assert.That(_logger.LastError, Is.EqualTo(nameof(Todo).IsUpdated()));
     }
 
     [Test]
@@ -96,6 +98,6 @@ public class TodoApplicationWithDataTests
     {
         await Application.Delete(3);
 
-        Assert.That(_logger.LastError, Is.EqualTo("Todo is Deleted"));
+        Assert.That(_logger.LastError, Is.EqualTo(nameof(Todo).IsDeleted()));
     }
 }

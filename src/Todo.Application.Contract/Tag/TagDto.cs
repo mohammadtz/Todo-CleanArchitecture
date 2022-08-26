@@ -15,12 +15,12 @@ public class TagDto
 
     public int Id { get; set; }
     public string Name { get; set; }
-    public string Color { get; set; }
+    public string? Color { get; set; }
     public DateTime CreationDate { get; set; }
 }
 
 public class TagCommand
 {
     public string Name { get; set; } = null!;
-    public string Color { get; set; } = null!;
+    public string? Color { get; set; } = null;
 }

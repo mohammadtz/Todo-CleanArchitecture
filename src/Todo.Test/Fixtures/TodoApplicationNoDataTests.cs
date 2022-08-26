@@ -9,6 +9,8 @@ using Todo.Test.Seeds;
 
 namespace Todo.Test.Fixtures;
 
+[Category("Todo")]
+[TestFixture, Apartment(ApartmentState.MTA)]
 public class TodoApplicationNoDataTests
 {
     protected TodoDbContext? Context;

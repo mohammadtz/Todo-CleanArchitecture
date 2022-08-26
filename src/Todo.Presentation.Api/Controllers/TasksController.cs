@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Contract.Todo;
+using Todo.Domain.Exceptions;
 using Todo.Presentation.Api.Utils;
 
 namespace Todo.Presentation.Api.Controllers;
@@ -23,14 +24,13 @@ public class TasksController : ControllerBase
 
             return new Response<List<TodoDto>>(result);
         }
-        catch (ArgumentNullException e)
+        catch (MessageException e)
         {
-            Console.WriteLine(e);
-            return BadRequest(this.HandleArgumentNullException(e));
+            return this.HandleMessageException(e);
         }
         catch (Exception e)
         {
-            return StatusCode(500, this.UnHandledException(e));
+            return  this.UnHandledException(e);
         }
     }
 
@@ -43,13 +43,17 @@ public class TasksController : ControllerBase
 
             return new Response<TodoDto>(result);
         }
-        catch (ArgumentNullException e)
+        catch (NotFoundException e)
         {
-            return BadRequest(this.HandleArgumentNullException(e));
+            return this.HandleNotFoundException(e);
+        }
+        catch (MessageException e)
+        {
+            return this.HandleMessageException(e);
         }
         catch (Exception e)
         {
-            return StatusCode(500, this.UnHandledException(e));
+            return  this.UnHandledException(e);
         }
     }
 
@@ -62,13 +66,17 @@ public class TasksController : ControllerBase
 
             return new Response<bool>(true);
         }
-        catch (ArgumentNullException e)
+        catch (NotFoundException e)
         {
-            return BadRequest(this.HandleArgumentNullException(e));
+            return this.HandleNotFoundException(e);
+        }
+        catch (MessageException e)
+        {
+            return this.HandleMessageException(e);
         }
         catch (Exception e)
         {
-            return StatusCode(500, this.UnHandledException(e));
+            return  this.UnHandledException(e);
         }
     }
 
@@ -81,13 +89,17 @@ public class TasksController : ControllerBase
 
             return new Response<bool>(true);
         }
-        catch (ArgumentNullException e)
+        catch (NotFoundException e)
         {
-            return BadRequest(this.HandleArgumentNullException(e));
+            return this.HandleNotFoundException(e);
+        }
+        catch (MessageException e)
+        {
+            return this.HandleMessageException(e);
         }
         catch (Exception e)
         {
-            return StatusCode(500, this.UnHandledException(e));
+            return  this.UnHandledException(e);
         }
     }
 
@@ -100,13 +112,17 @@ public class TasksController : ControllerBase
 
             return new Response<bool>(true);
         }
-        catch (ArgumentNullException e)
+        catch (NotFoundException e)
         {
-            return BadRequest(this.HandleArgumentNullException(e));
+            return this.HandleNotFoundException(e);
+        }
+        catch (MessageException e)
+        {
+            return this.HandleMessageException(e);
         }
         catch (Exception e)
         {
-            return StatusCode(500, this.UnHandledException(e));
+            return  this.UnHandledException(e);
         }
     }
 
@@ -119,13 +135,17 @@ public class TasksController : ControllerBase
 
             return new Response<bool>(true);
         }
-        catch (ArgumentNullException e)
+        catch (NotFoundException e)
         {
-            return BadRequest(this.HandleArgumentNullException(e));
+            return this.HandleNotFoundException(e);
+        }
+        catch (MessageException e)
+        {
+            return this.HandleMessageException(e);
         }
         catch (Exception e)
         {
-            return StatusCode(500, this.UnHandledException(e));
+            return  this.UnHandledException(e);
         }
     }
 }

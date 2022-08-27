@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Todo.Application;
 using Todo.Application.Contract.Todo;
 using Todo.Application.Contract.Utils;
@@ -24,6 +25,7 @@ public class TodoApplicationWithDataTests
     public void Setup()
     {
         var options = new DbContextOptionsBuilder<TodoDbContext>()
+            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .UseInMemoryDatabase("mr_lottery_db").Options;
 
         Context = new TodoDbContext(options);
@@ -32,7 +34,8 @@ public class TodoApplicationWithDataTests
         _logger = new Logger();
 
         var tagRepository = new TagRepository(Context);
-        Application = new TodoApplication(todoRepository, tagRepository, _logger);
+        var unitOfWork = new UnitOfWorkEf(Context);
+        Application = new TodoApplication(todoRepository, tagRepository, _logger, unitOfWork);
 
         SeedData.AddData(Context);
     }

@@ -1,13 +1,8 @@
-﻿namespace Todo.Domain.Tag;
+﻿using Framework.Infrastructure;
 
-public interface ITagRepository
+namespace Todo.Domain.Tag;
+
+public interface ITagRepository : IBaseRepository<int, Tag>
 {
-    Task<IEnumerable<TagDto>> GetAllAsync();
-    Task<Tag?> GetAsync(int id);
-    Task<bool> IsValid(int id);
-    Task Insert(Tag? entity);
-    Task Update(Tag? entity);
-    Task Delete(Tag? entity);
-    Task Delete(int id);
-    Task SaveChangesAsync();
+    Task<IEnumerable<TagDto>> GetListAsync();
 }

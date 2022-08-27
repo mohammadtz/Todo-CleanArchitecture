@@ -1,4 +1,5 @@
-﻿using Todo.Application.Contract.Tag;
+﻿using Framework.Infrastructure;
+using Todo.Application.Contract.Tag;
 using Todo.Application.Contract.Todo;
 using Todo.Application.Contract.Utils;
 using Todo.Domain.Exceptions;
@@ -10,19 +11,21 @@ namespace Todo.Application;
 public class TodoApplication : ITodoApplication
 {
     private readonly ITodoRepository _todoRepository;
-    private  readonly ITagRepository _tagRepository;
+    private readonly ITagRepository _tagRepository;
     private readonly ILogger _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public TodoApplication(ITodoRepository todoRepository, ITagRepository tagRepository, ILogger logger)
+    public TodoApplication(ITodoRepository todoRepository, ITagRepository tagRepository, ILogger logger, IUnitOfWork unitOfWork)
     {
         _todoRepository = todoRepository;
         _tagRepository = tagRepository;
         _logger = logger;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<TodoDto>> GetAll()
     {
-        var result = await _todoRepository.GetAllAsync();
+        var result = await _todoRepository.GetListAsync();
 
         return result.ToList();
     }
@@ -38,48 +41,92 @@ public class TodoApplication : ITodoApplication
 
     public async Task ChangeStatus(int id)
     {
-        var entity = await _todoRepository.GetAsync(id);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
+            var entity = await _todoRepository.GetAsync(id);
 
-        if (entity == null) throw new NotFoundException(nameof(Domain.Todo.Todo));
+            if (entity == null) throw new NotFoundException(nameof(Domain.Todo.Todo));
 
-        entity.ChangeStatus();
-
-        await _todoRepository.SaveChangesAsync();
+            entity.ChangeStatus();
+            await _unitOfWork.CommitTransactionAsync();
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task Create(TodoCommand command)
     {
-        if (command.TagId != null && !await _tagRepository.IsValid(command.TagId ?? 0))
-            throw new MessageException(nameof(command.TagId).InValid());
-        if (command.Title is null) throw new NotFoundException(nameof(command.Title));
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        var entity = new Domain.Todo.Todo(command.Title, command.TagId);
-        await _todoRepository.Insert(entity);
+            if (command.TagId != null && !_tagRepository.Exist(x => x.Id == command.TagId))
+                throw new MessageException(nameof(command.TagId).InValid());
+            if (command.Title is null) throw new NotFoundException(nameof(command.Title));
 
-        _logger.Log(nameof(Todo).IsCreated());
+            var entity = new Domain.Todo.Todo(command.Title, command.TagId);
+            await _todoRepository.Create(entity);
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            _logger.Log(nameof(Todo).IsCreated());
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task Update(int id, TodoCommand command)
     {
-        var entity = await _todoRepository.GetAsync(id);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        if (entity is null) throw new ArgumentNullException(nameof(Domain.Todo.Todo));
+            var entity = await _todoRepository.GetAsync(id);
 
-        if (command.TagId != null && !await _tagRepository.IsValid(command.TagId ?? 0))
-            throw new ArgumentNullException(nameof(command.TagId));
+            if (entity is null) throw new ArgumentNullException(nameof(Domain.Todo.Todo));
 
-        entity.Title = command.Title;
-        entity.TagId = command.TagId;
+            if (command.TagId != null && !_tagRepository.Exist(x => x.Id == command.TagId))
+                throw new ArgumentNullException(nameof(command.TagId));
 
-        await _todoRepository.Update(entity);
+            entity.Title = command.Title;
+            entity.TagId = command.TagId;
 
-        _logger.Log(nameof(Todo).IsUpdated());
+            _todoRepository.Update(entity);
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            _logger.Log(nameof(Todo).IsUpdated());
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task Delete(int id)
     {
-        await _todoRepository.Delete(id);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        _logger.Log(nameof(Todo).IsDeleted());
+            await _todoRepository.Delete(id);
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            _logger.Log(nameof(Todo).IsDeleted());
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 }

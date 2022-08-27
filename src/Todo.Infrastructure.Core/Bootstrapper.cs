@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Framework.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Todo.Application;
 using Todo.Application.Contract.Tag;
@@ -21,6 +22,9 @@ public static class Bootstrapper
         // repositories
         services.AddTransient<ITagRepository, TagRepository>();
         services.AddTransient<ITodoRepository, TodoRepository>();
+
+        // unit of works
+        services.AddTransient<IUnitOfWork, UnitOfWorkEf>();
 
         services.AddDbContext<TodoDbContext>(options =>
             options.UseLazyLoadingProxies().UseSqlite(connectionString));

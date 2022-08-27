@@ -1,4 +1,5 @@
-﻿using Todo.Application.Contract.Tag;
+﻿using Framework.Infrastructure;
+using Todo.Application.Contract.Tag;
 using Todo.Application.Contract.Utils;
 using Todo.Domain.Exceptions;
 using Todo.Domain.Tag;
@@ -9,16 +10,18 @@ public class TagApplication : ITagApplication
 {
     private readonly ITagRepository _tagRepository;
     private readonly ILogger _logger;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public TagApplication(ITagRepository tagRepository, ILogger logger)
+    public TagApplication(ITagRepository tagRepository, ILogger logger, IUnitOfWork unitOfWork)
     {
         _tagRepository = tagRepository;
         _logger = logger;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<TagDto>> GetAll()
     {
-        var result = await _tagRepository.GetAllAsync();
+        var result = await _tagRepository.GetListAsync();
 
         return result.ToList();
     }
@@ -34,34 +37,70 @@ public class TagApplication : ITagApplication
 
     public async Task Create(TagCommand command)
     {
-        if(command == null) throw new ArgumentNullException(nameof(command));
-        if (command.Name is null) throw new NotFoundException(nameof(command.Name));
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        var entity = new Tag(command.Name, command.Color);
-        await _tagRepository.Insert(entity);
+            if (command == null) throw new ArgumentNullException(nameof(command));
+            if (command.Name is null) throw new NotFoundException(nameof(command.Name));
 
-        _logger.Log(nameof(Tag).IsCreated());
+            var entity = new Tag(command.Name, command.Color);
+            await _tagRepository.Create(entity);
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            _logger.Log(nameof(Tag).IsCreated());
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task Update(int id, TagCommand command)
     {
-        var entity = await _tagRepository.GetAsync(id);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        if (entity is null) throw new ArgumentNullException(nameof(command));
-        if (command.Name is null) throw new NotFoundException(nameof(command.Name));
+            var entity = await _tagRepository.GetAsync(id);
 
-        entity.Color = command.Color ?? "ffffff";
-        entity.Name = command.Name;
+            if (entity is null) throw new ArgumentNullException(nameof(command));
+            if (command.Name is null) throw new NotFoundException(nameof(command.Name));
 
-        await _tagRepository.Update(entity);
+            entity.Color = command.Color ?? "ffffff";
+            entity.Name = command.Name;
 
-        _logger.Log(nameof(Tag).IsUpdated());
+            _tagRepository.Update(entity);
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            _logger.Log(nameof(Tag).IsUpdated());
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task Delete(int id)
     {
-        await _tagRepository.Delete(id);
+        try
+        {
+            await _unitOfWork.BeginTransactionAsync();
 
-        _logger.Log(nameof(Tag).IsDeleted());
+            await _tagRepository.Delete(id);
+
+            await _unitOfWork.CommitTransactionAsync();
+
+            _logger.Log(nameof(Tag).IsDeleted());
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Todo.Application;
 using Todo.Application.Contract.Tag;
 using Todo.Application.Contract.Utils;
@@ -21,13 +22,15 @@ public class TagApplicationNoDataTests
     public void Setup()
     {
         var options = new DbContextOptionsBuilder<TodoDbContext>()
+            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .UseInMemoryDatabase("mr_lottery_db").Options;
 
         Context = new TodoDbContext(options);
         logger = new Logger();
 
         var tagRepository = new TagRepository(Context);
-        Application = new TagApplication(tagRepository, logger);
+        var unitOfWork = new UnitOfWorkEf(Context);
+        Application = new TagApplication(tagRepository, logger, unitOfWork);
     }
 
     [Test]
@@ -53,7 +56,7 @@ public class TagApplicationNoDataTests
     [Test]
     public void Create_WhenNameNotFound_ThrowException()
     {
-        Assert.That(async () => await Application.Create(new TagCommand {  }), Throws.Exception);
+        Assert.That(async () => await Application.Create(new TagCommand { }), Throws.Exception);
     }
 
     [Test]

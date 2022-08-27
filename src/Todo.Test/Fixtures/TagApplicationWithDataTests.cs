@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Todo.Application;
 using Todo.Application.Contract.Tag;
 using Todo.Application.Contract.Utils;
@@ -23,13 +24,15 @@ public class TagApplicationWithDataTests
     public void Setup()
     {
         var options = new DbContextOptionsBuilder<TodoDbContext>()
+            .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
             .UseInMemoryDatabase("mr_lottery_db").Options;
 
         Context = new TodoDbContext(options);
         _logger = new Logger();
 
         var tagRepository = new TagRepository(Context);
-        Application = new TagApplication(tagRepository, _logger);
+        var unitOfWork = new UnitOfWorkEf(Context);
+        Application = new TagApplication(tagRepository, _logger, unitOfWork);
 
         SeedData.AddData(Context);
     }
@@ -99,7 +102,7 @@ public class TagApplicationWithDataTests
     [Test]
     public async Task Update_WhenColorIsNull_ShowSuccessLog()
     {
-        await Application.Update(1,new TagCommand { Name = "tag test" });
+        await Application.Update(1, new TagCommand { Name = "tag test" });
 
         Assert.That(_logger.LastError, Is.EqualTo(nameof(Tag).IsUpdated()));
     }

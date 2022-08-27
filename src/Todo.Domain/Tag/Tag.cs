@@ -1,6 +1,8 @@
-﻿namespace Todo.Domain.Tag;
+﻿using Framework.Domain;
 
-public class Tag
+namespace Todo.Domain.Tag;
+
+public class Tag : BaseEntity<int>
 {
     public Tag(string name, string? color)
     {
@@ -11,10 +13,8 @@ public class Tag
         Tasks = new HashSet<Todo.Todo>();
     }
 
-    public int Id { get; set; }
     public string Name { get; set; }
     public string Color { get; set; }
-    public DateTime CreationDate { get; set; }
 
     public virtual ICollection<Todo.Todo> Tasks { get; set; }
 }

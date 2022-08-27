@@ -1,6 +1,8 @@
-﻿namespace Todo.Domain.Todo;
+﻿using Framework.Domain;
 
-public class Todo
+namespace Todo.Domain.Todo;
+
+public class Todo : BaseEntity<int>
 {
     public Todo(string title, int? tagId = null)
     {
@@ -11,9 +13,7 @@ public class Todo
         TagId = tagId;
     }
 
-    public int Id { get; set; }
     public string Title { get; set; }
-    public DateTime CreationDate { get; set; }
     public DateTime? IsDoneDate { get; set; }
     public bool IsDone { get; set; }
     public int? TagId { get; set; }

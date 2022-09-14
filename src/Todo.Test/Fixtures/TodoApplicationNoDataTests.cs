@@ -25,7 +25,7 @@ public class TodoApplicationNoDataTests
     {
         var options = new DbContextOptionsBuilder<TodoDbContext>()
             .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning))
-            .UseInMemoryDatabase("mr_lottery_db").Options;
+            .UseInMemoryDatabase("todo_db").Options;
 
         Context = new TodoDbContext(options);
         var todoRepository = new TodoRepository(Context);

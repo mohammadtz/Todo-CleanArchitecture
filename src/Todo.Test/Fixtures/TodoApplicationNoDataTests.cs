@@ -18,7 +18,7 @@ public class TodoApplicationNoDataTests
 {
     protected TodoDbContext? Context;
     protected ITodoApplication Application = null!;
-    private ILogger logger;
+    private ILogger? logger;
 
     [SetUp]
     public void Setup()

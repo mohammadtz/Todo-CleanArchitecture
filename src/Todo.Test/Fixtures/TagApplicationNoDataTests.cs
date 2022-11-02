@@ -16,7 +16,7 @@ public class TagApplicationNoDataTests
 {
     protected TodoDbContext? Context;
     protected ITagApplication Application = null!;
-    private ILogger logger;
+    private ILogger? logger;
 
     [SetUp]
     public void Setup()

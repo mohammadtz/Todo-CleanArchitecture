@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Framework.Infrastructure;
 
 public class BaseRepository<TKey, T> : IBaseRepository<TKey, T> where T : BaseEntity<TKey>
+                                                                where TKey : struct
 {
     private readonly DbContext _dbContext;
 
@@ -49,9 +50,9 @@ public class BaseRepository<TKey, T> : IBaseRepository<TKey, T> where T : BaseEn
         _dbContext.Remove<T>(entity);
     }
 
-    public async Task Delete(TKey? key)
+    public async Task Delete(TKey key)
     {
-        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (string.IsNullOrWhiteSpace(key.ToString())) throw new ArgumentNullException(nameof(key));
 
         var entity = await GetAsync(key);
 
